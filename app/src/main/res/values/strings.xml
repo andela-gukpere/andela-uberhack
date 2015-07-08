@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">UberHack</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="error_connection">Error Connecting to the internet</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_auth">AuthActivity</string>
 </resources>

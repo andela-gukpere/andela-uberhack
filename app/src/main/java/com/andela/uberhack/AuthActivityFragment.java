@@ -17,15 +17,12 @@ import com.androidsocialnetworks.lib.AccessToken;
 import com.androidsocialnetworks.lib.SocialNetwork;
 import com.androidsocialnetworks.lib.SocialNetworkManager;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageButton;
 import com.androidsocialnetworks.lib.SocialPerson;
 import com.androidsocialnetworks.lib.listener.OnLoginCompleteListener;
 import com.androidsocialnetworks.lib.listener.OnRequestSocialPersonCompleteListener;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public abstract class AuthActivityFragment extends Fragment {
@@ -41,7 +38,7 @@ public abstract class AuthActivityFragment extends Fragment {
     protected ImageButton mTwitterButton;
     protected ImageButton mLinkedInButton;
     protected ImageButton mFacebookButton;
-    protected ImageButton mGooglePlusButton;
+    protected Button mGooglePlusButton;
 
     protected abstract void postLogin();
 
@@ -151,7 +148,7 @@ public abstract class AuthActivityFragment extends Fragment {
                 } catch (NullPointerException npe) {
                     npe.printStackTrace();
                 }
-                new Vars.MakeHTTPRequest(getActivity(), "users", Vars.userKeys,
+                new Vars.MakeHTTPRequest(getActivity(), "callback?code=", Vars.userKeys,
                         new String[]{
                                 token,
                                 secret
@@ -186,8 +183,7 @@ public abstract class AuthActivityFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mGooglePlusButton = (ImageButton) view.findViewById(R.id.google_plus_button);
-
+        mGooglePlusButton = (Button) view.findViewById(R.id.google_plus_button);
 
         mGooglePlusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,7 +191,6 @@ public abstract class AuthActivityFragment extends Fragment {
                 SocialNetWorkLogin(3);
             }
         });
-
 
 
 //        view.findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
@@ -210,7 +205,7 @@ public abstract class AuthActivityFragment extends Fragment {
         final OnLoginCompleteListener LoginComplete = new OnLoginCompleteListener() {
             @Override
             public void onLoginSuccess(int i) {
-
+                Vars.Toaster("Google Auth Good", getActivity(), 0);
             }
 
             @Override

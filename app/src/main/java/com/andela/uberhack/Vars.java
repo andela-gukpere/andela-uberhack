@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import com.andela.uberhack.models.User;
 import com.androidsocialnetworks.lib.SocialNetworkManager;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -38,23 +39,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.trivoda.jara.activities.CategoryActivity;
-import com.trivoda.jara.activities.CompanyActivity;
-import com.trivoda.jara.activities.OfferActivity;
-import com.trivoda.jara.custom.AutoSpanRecyclerView;
-import com.trivoda.jara.custom.MyTextView;
-import com.trivoda.jara.custom.adapters.OfferAdapter;
-import com.trivoda.jara.model.Outlet;
-import com.trivoda.jara.schemas.Category;
-import com.trivoda.jara.schemas.Offer;
-import com.trivoda.jara.schemas.User;
+
 
 public class Vars {
     public enum HttpMethods {
@@ -118,21 +108,7 @@ public class Vars {
     public static final String KEY_CASHED_OUT = "cashed_out";
     public static final String KEY_ONLINE_AT = "online_at";
     public static final String KEY_BANK_ID = "bank_id";
-    public static final String KEY_COMPANY = "company";
-    public static final String KEY_RATING = "rating";
-    public static final String KEY_VALUE = "value";
-    public static final String KEY_RATINGS = "ratings";
 
-
-    public static final String KEY_FRIEND_ID = "friend_id";
-    public static final String KEY_CREATED_AT = "created_at";
-    public static final String KEY_MODIFIED_AT = "modified_at";
-    public static final String KEY_OFFERS = "offers";
-    public static final String KEY_OUTLETS = "outlets";
-    public static final String KEY_OFFER_COUNT = "offer_count";
-    public static final String KEY_LAST_OFFER_ID = "last_offer_id";
-    public static final String KEY_LAST_NOTIFICATION_ID = "last_notification_id";
-    public static final String KEY_COUNT = "count";
     public static final String KEY_PHONE = "phone";
     public static final String KEY_ACC_NO = "acc_no";
     public static final String KEY_ACC_NAME = "acc_name";
@@ -147,7 +123,7 @@ public class Vars {
     public static SocialNetworkManager mSocialNetworkManager;
     public static int socialNetworkID = 0;
     public static String BROADCAST_ACTION = "com.trivoda.jara.VIEW_ACTION";
-    public static String BASE_URL = "https://app.yourjara.com/";
+    public static String BASE_URL = "https://andelahack.herokuapp.com/uber/";
     //public static String BASE_URL = "http://192.168.57.1/projects/your-jara/app/";
     public static String API_PATH = "api/";
     private static String myPrefs = "trvYJ001";
@@ -173,13 +149,7 @@ public class Vars {
 
     private static Dialog loading = null;
 
-    public static User getCurrentUser() {
-        if (Vars.currentUser != null) {
-            return Vars.currentUser;
-        }
-        List<User> users = User.listAll(User.class);
-        return users.isEmpty() ? null : users.get(0);
-    }
+
 
     public static String getAPI_TOKEN(Context context) {
         locale = context.getResources().getConfiguration().locale.toString();
@@ -195,37 +165,9 @@ public class Vars {
         return expiration - Math.round(result);
     }
 
-    public static void saveUser(com.trivoda.jara.model.User user) {
+    public static void saveUser(User user) {
 
-        if (Vars.currentUser == null) {
-            Vars.currentUser = new User(user.id, user.platform, user.user_id, user.name, user.username, user.email, user.phone, user.picture, user.token, user.secret, user.bank_id, user.acc_name, user.acc_no, user.card_id, user.wallet, user.wallet2, user.cashed_out, user.card_type, user.card_duration, user.enabled, user.modified_at, user.acc_type, user.email_notify, user.online_at, user.created_at);
-            Vars.currentUser.save();
-        } else {
 
-            Vars.currentUser.user_id = user.user_id;
-            Vars.currentUser.platform = user.platform;
-            Vars.currentUser.name = user.name;
-            Vars.currentUser.card_id = user.card_id;
-            Vars.currentUser.username = user.username;
-            Vars.currentUser.email = user.email;
-            Vars.currentUser.phone = user.phone;
-            Vars.currentUser.picture = user.picture;
-            Vars.currentUser.token = user.token;
-            Vars.currentUser.secret = user.secret;
-            Vars.currentUser.bank_id = user.bank_id;
-            Vars.currentUser.acc_name = user.acc_name;
-            Vars.currentUser.acc_no = user.acc_no;
-            Vars.currentUser.card_id = user.card_id;
-            Vars.currentUser.card_duration = user.card_duration;
-            Vars.currentUser.card_type = user.card_type;
-            Vars.currentUser.wallet = user.wallet;
-            Vars.currentUser.wallet2 = user.wallet2;
-            Vars.currentUser.online_at = user.online_at;
-            Vars.currentUser.email_notify = user.email_notify;
-            Vars.currentUser.acc_type = user.acc_type;
-            Vars.currentUser.modified_at = user.modified_at;
-            Vars.currentUser.save();
-        }
     }
 
 
@@ -259,10 +201,6 @@ public class Vars {
     }
 
 
-    public static void LaunchOfferActivity(Activity activity, com.trivoda.jara.model.Offer offer) {
-        currentOffer = offer;
-        activity.startActivity(new Intent(activity, OfferActivity.class));
-    }
 
     public static String dateToRelativeString(long date) {
         PrettyTime prettyTime = new PrettyTime();
@@ -270,39 +208,25 @@ public class Vars {
         return prettyTime.format(then);
     }
 
-    public static void LaunchCompanyActivity(Activity activity, com.trivoda.jara.model.Company company) {
-        currentCompany = company;
-        activity.startActivity(new Intent(activity, CompanyActivity.class));
-    }
 
-    public static void LaunchCategoryActivity(Activity activity, com.trivoda.jara.model.Category category) {
-        currentCategory = category;
-        activity.startActivity(new Intent(activity, CategoryActivity.class));
-    }
 
-    public static void showHomeButton(ActionBar actionBar) {
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-
-    }
-
-    public static AutoSpanRecyclerView recyclerView = null;
-
-    public static void PopulateOfferList(final Activity activity, final View view, final com.trivoda.jara.model.Offer[] offers, final int recyclerViewId) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (offers == null || offers.length == 0) {
-                    Vars.showCenterMessage(activity, view, R.id.mainView, activity.getString(R.string.no_content) + " " + activity.getString(R.string.title_offers).toLowerCase(), null);
-                } else {
-                    recyclerView = (AutoSpanRecyclerView) view.findViewById(recyclerViewId);
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
-                    recyclerView.setAdapter(new OfferAdapter(offers, activity));
-                }
-            }
-        });
-    }
+//    public static AutoSpanRecyclerView recyclerView = null;
+//
+//    public static void PopulateOfferList(final Activity activity, final View view, final com.trivoda.jara.model.Offer[] offers, final int recyclerViewId) {
+//        activity.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (offers == null || offers.length == 0) {
+//                    Vars.showCenterMessage(activity, view, R.id.mainView, activity.getString(R.string.no_content) + " " + activity.getString(R.string.title_offers).toLowerCase(), null);
+//                } else {
+//                    recyclerView = (AutoSpanRecyclerView) view.findViewById(recyclerViewId);
+//                    recyclerView.setHasFixedSize(true);
+//                    recyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
+//                    recyclerView.setAdapter(new OfferAdapter(offers, activity));
+//                }
+//            }
+//        });
+//    }
 
 
     public static void ShowNativeMessage(final Activity activity, final String msg, final String title, final DialogInterface.OnClickListener positiveClick) {
@@ -312,8 +236,8 @@ public class Vars {
             public void run() {
                 Builder dg = new AlertDialog.Builder(activity);
                 dg.setIcon(R.mipmap.ic_launcher).setTitle(title != null ? title : activity.getString(R.string.app_name))
-                        .setMessage(msg).setCancelable(true).setPositiveButton(activity.getString(R.string.action_retry), positiveClick)
-                        .setNegativeButton(activity.getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
+                        .setMessage(msg).setCancelable(true).setPositiveButton("Retry", positiveClick)
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -325,45 +249,7 @@ public class Vars {
 
     }
 
-    public static class UpdateCurrentUser {
 
-        protected void then(String result) {
-            try {
-                saveUser(new Gson().fromJson(result, com.trivoda.jara.model.User.class));
-            } catch (Exception e0) {
-                e0.printStackTrace();
-            }
-        }
-
-        public UpdateCurrentUser(final Activity activity) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    init(activity);
-                    if (currentUser != null) {
-                        new MakeHTTPRequest(activity, "users/" + Vars.currentUser._id, Vars.GET) {
-                            @Override
-                            protected void done(String result) {
-                                super.done(result);
-                                then(result);
-                            }
-
-                            @Override
-                            protected void error(int code, String result, int viewId) {
-                                super.error(code, result, viewId);
-                                ShowNativeMessage(activity, result, activity.getString(R.string.error), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        new UpdateCurrentUser(activity);
-                                    }
-                                });
-                            }
-                        };
-                    }
-                }
-            }).start();
-        }
-    }
 
     public static void isLoading(final Activity context, final boolean b) {
         context.runOnUiThread(new Runnable() {
@@ -372,7 +258,7 @@ public class Vars {
                 try {
                     if (loading == null) {
                         loading = new Dialog(context);
-                        loading.setTitle(context.getString(R.string.title_loading));
+                        //loading.setTitle(context.getString(R.string.title_loading));
                         loading.setCancelable(false);
                         loading.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         loading.setContentView(R.layout.dialog_loading);
@@ -398,77 +284,7 @@ public class Vars {
         });
     }
 
-    public static void isCenterLoading(Activity activity, View view, boolean show) {
-        centerLoading(activity, view, show, -1);
-    }
 
-
-    private static void centerLoading(final Activity activity, final View view, final boolean show, final int viewId) {
-
-        final int ViewId = viewId == -1 ? R.id.mainView : viewId;
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (view == null) {
-                    if (activity.findViewById(R.id.loadingView) != null) {
-                        (activity.findViewById(R.id.loadingView)).setVisibility(show ? View.VISIBLE : View.GONE);
-                        (activity.findViewById(ViewId)).setVisibility(show ? View.GONE : View.VISIBLE);
-                    }
-                } else {
-                    if (view.findViewById(R.id.loadingView) != null) {
-                        (view.findViewById(R.id.loadingView)).setVisibility(show ? View.VISIBLE : View.GONE);
-                        (view.findViewById(ViewId)).setVisibility(show ? View.GONE : View.VISIBLE);
-                    }
-                }
-            }
-        });
-    }
-
-    public static void isCenterLoading(final Activity activity, View view, final boolean show, final int viewId) {
-        if (activity != null) {
-            centerLoading(activity, view, show, viewId);
-        }
-    }
-
-    public static void showCenterMessage(Activity activity, View view, int viewId, String message, View.OnClickListener click) {
-        centerMessage(activity, view, viewId, message, click);
-    }
-
-    public static void showCenterMessage(Activity activity, int viewId, String message, View.OnClickListener click) {
-        centerMessage(activity, null, viewId, message, click);
-    }
-
-    private static void centerMessage(final Activity activity, final View view, final int viewId, final String message, final View.OnClickListener click) {
-        if (activity == null) {
-            return;
-        }
-        if (view == null) {
-            isCenterLoading(activity, null, false, viewId);
-        } else {
-            isCenterLoading(activity, view, false, viewId);
-        }
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                boolean isView = view != null && view.findViewById(R.id.messageView) != null || activity.findViewById(R.id.messageView) != null;
-                if (isView) {
-                    View messageView;
-                    if (view != null) {
-                        messageView = view.findViewById(R.id.messageView);
-                    } else {
-                        messageView = activity.findViewById(R.id.messageView);
-                    }
-                    messageView.setVisibility(View.VISIBLE);
-                    ((MyTextView) messageView.findViewById(R.id.messageTextView)).setText(message);
-                    if (click != null) {
-                        (messageView.findViewById(R.id.messageActionButton)).setOnClickListener(click);
-                    } else {
-                        (messageView.findViewById(R.id.messageActionButton)).setVisibility(View.GONE);
-                    }
-                }
-            }
-        });
-    }
 
     public static boolean isOldUser(Activity activity, boolean isOld) {
 
@@ -484,7 +300,7 @@ public class Vars {
     }
 
     public static void init(Context context) {
-        currentUser = getCurrentUser();
+//        currentUser = getCurrentUser();
         API_TOKEN = getAPI_TOKEN(context);
     }
 
@@ -515,9 +331,7 @@ public class Vars {
     public static void clearDB(Context context) {
         try {
             Vars.currentUser = null;
-            User.deleteAll(User.class);
-            Offer.deleteAll(Offer.class);
-            Category.deleteAll(Category.class);
+
         } catch (SQLiteException sqlError) {
             sqlError.printStackTrace();
         }
@@ -540,7 +354,7 @@ public class Vars {
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    done(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_offer));
+                    done(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_plusone_small_off_client));
                 }
             };
             Picasso.with(context).load(bitmapURL).centerInside().into(target);
@@ -626,14 +440,14 @@ public class Vars {
         }
 
         private void makeRequest(final String apiRoute, final String[] keys, final String[] values, final int method, final int viewId) {
-            Vars.isCenterLoading(activity, view, true, viewId);
+            //  Vars.isCenterLoading(activity, view, true, viewId);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         final Object[] result = HttpRequest(apiRoute, keys, values, HttpMethods.values()[method - 1], activity);
                         if ((Boolean) result[1]) {
-                            Vars.isCenterLoading(activity, view, false, viewId);
+                            //Vars.isCenterLoading(activity, view, false, viewId);
                             done(result[0].toString());
                             done(getInt(result[2]), result[0].toString());
                         } else {
@@ -656,7 +470,7 @@ public class Vars {
         }
 
         protected void error(int code, String result, int viewId) {
-            Vars.showCenterMessage(activity, view, viewId, "(#" + code + ") " + result, clickListener);
+            //Vars.showCenterMessage(activity, view, viewId, "(#" + code + ") " + result, clickListener);
             if (clickListener == null && activity != null) {
                 Vars.Toaster("#(" + code + ") " + activity.getString(R.string.error_connection), activity, 0);
             }
@@ -695,9 +509,9 @@ public class Vars {
 
 
             con.setRequestProperty(KEY_HEADER_TOKEN, API_TOKEN);
-            if (currentUser != null) {
-                con.setRequestProperty(KEY_HEADER_USER, String.valueOf(currentUser._id));
-            }
+//            if (currentUser != null) {
+//                con.setRequestProperty(KEY_HEADER_USER, String.valueOf(currentUser._id));
+//            }
             con.setRequestProperty("Locale", locale);
 
             switch (method) {
