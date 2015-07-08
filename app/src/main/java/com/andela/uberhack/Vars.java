@@ -1,0 +1,753 @@
+package com.andela.uberhack;
+
+/**
+ * Created by goodson on 3/28/15.
+ */
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.ocpsoft.prettytime.PrettyTime;
+
+import com.androidsocialnetworks.lib.SocialNetworkManager;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.Toast;
+
+import com.trivoda.jara.activities.CategoryActivity;
+import com.trivoda.jara.activities.CompanyActivity;
+import com.trivoda.jara.activities.OfferActivity;
+import com.trivoda.jara.custom.AutoSpanRecyclerView;
+import com.trivoda.jara.custom.MyTextView;
+import com.trivoda.jara.custom.adapters.OfferAdapter;
+import com.trivoda.jara.model.Outlet;
+import com.trivoda.jara.schemas.Category;
+import com.trivoda.jara.schemas.Offer;
+import com.trivoda.jara.schemas.User;
+
+public class Vars {
+    public enum HttpMethods {
+        GET, POST, PUT, DELETE
+    }
+
+    public static final int GET = 1;
+    public static final int POST = 2;
+    // public static final int PUT = 3;
+    public static final int DELETE = 4;
+    public static final String KEY_STATUS_CODE = "status_code";
+    public static final String CHARSET = "UTF-8";
+    public static final String KEY_ERROR = "error";
+    public static final String KEY_TRANS_ID = "transaction_id";
+    public static final String KEY_REFERS = "refers";
+    public static final String KEY_AIRTIME = "airtime";
+    public static final String KEY_USER = "user";
+    public static final String KEY_REFERRER = "referrer";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_HEADER_TOKEN = "X-Yj-Token";
+    public static final String KEY_HEADER_USER = "X-Yj-User";
+    public static final String KEY_ID = "id";
+    //  public static final String KEY_JSON = "json";
+    public static final String KEY_QUERY = "query";
+    public static final String KEY_ENABLED = "enabled";
+    public static final String KEY_UID = "user_id";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_PASSWORD = "password";
+    public static final String KEY_PLT = "platform";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_ADDRESS = "address";
+    public static final String KEY_TOKEN = "token";
+    public static final String KEY_SECRET = "secret";
+    public static final String KEY_USN = "username";
+    public static final String KEY_EXPIRY = "expiry";
+    public static final String KEY_IMG = "picture";
+    public static final String KEY_IMAGES = "images";
+    public static final String KEY_IMAGE = "image";
+    public static final String KEY_IMAGE_SM = "image_sm";
+    public static final String KEY_LOGO = "logo";
+    public static final String KEY_LOCATION = "location";
+    public static final String KEY_LNG = "longitude";
+    public static final String KEY_EMAIL_NOTIFY = "email_notify";
+    public static final String KEY_NOTIFICATIONS = "notifications";
+
+    public static final String KEY_LAT = "latitude";
+    //  public static final String KEY_LOCATION_MAP = "location_map";
+    public static final String KEY_WEBSITE = "website";
+    public static final String KEY_LOGO_SM = "logo_sm";
+    public static final String KEY_CARD_ID = "card_id";
+    public static final String KEY_CARD_TYPE = "card_type";
+    public static final String KEY_CARD_DURATION = "card_duration";
+    public static final String KEY_CARD_VAL = "card_value";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_HIGHLIGHTS = "highlights";
+    public static final String KEY_PRICE_DISCOUNT = "price_discount";
+    public static final String KEY_PRICE_ORIGINAL = "price_original";
+    public static final String KEY_QUANTITY = "quantity";
+    public static final String KEY_WALLET = "wallet";
+    public static final String KEY_WALLET_2 = "wallet2";
+    public static final String KEY_CASHED_OUT = "cashed_out";
+    public static final String KEY_ONLINE_AT = "online_at";
+    public static final String KEY_BANK_ID = "bank_id";
+    public static final String KEY_COMPANY = "company";
+    public static final String KEY_RATING = "rating";
+    public static final String KEY_VALUE = "value";
+    public static final String KEY_RATINGS = "ratings";
+
+
+    public static final String KEY_FRIEND_ID = "friend_id";
+    public static final String KEY_CREATED_AT = "created_at";
+    public static final String KEY_MODIFIED_AT = "modified_at";
+    public static final String KEY_OFFERS = "offers";
+    public static final String KEY_OUTLETS = "outlets";
+    public static final String KEY_OFFER_COUNT = "offer_count";
+    public static final String KEY_LAST_OFFER_ID = "last_offer_id";
+    public static final String KEY_LAST_NOTIFICATION_ID = "last_notification_id";
+    public static final String KEY_COUNT = "count";
+    public static final String KEY_PHONE = "phone";
+    public static final String KEY_ACC_NO = "acc_no";
+    public static final String KEY_ACC_NAME = "acc_name";
+    public static final String KEY_ACC_TYPE = "acc_type";
+    public static final String KEY_CAT = "category";
+    public static boolean isLoginLoading = false;
+    public static String API_TOKEN = "";
+    public static String locale = "en-US";
+    public static String[] platforms = new String[]{"", "Twitter", "LinkedIn", "Google", "Facebook"};
+    public static User currentUser = null;
+
+    public static SocialNetworkManager mSocialNetworkManager;
+    public static int socialNetworkID = 0;
+    public static String BROADCAST_ACTION = "com.trivoda.jara.VIEW_ACTION";
+    public static String BASE_URL = "https://app.yourjara.com/";
+    //public static String BASE_URL = "http://192.168.57.1/projects/your-jara/app/";
+    public static String API_PATH = "api/";
+    private static String myPrefs = "trvYJ001";
+    public static String VersionName = "";
+    public static String VersionCode = "";
+    public static String friendId = null;
+    public static String offerId = null;
+    public static String[] userKeys = new String[]{
+            KEY_UID,
+            KEY_CARD_ID,
+            KEY_PLT,
+            KEY_NAME,
+            KEY_USN,
+            KEY_EMAIL,
+            KEY_PHONE,
+            KEY_BANK_ID,
+            KEY_ACC_NAME,
+            KEY_ACC_NO,
+            KEY_IMG,
+            KEY_TOKEN,
+            KEY_SECRET
+    };
+
+    private static Dialog loading = null;
+
+    public static User getCurrentUser() {
+        if (Vars.currentUser != null) {
+            return Vars.currentUser;
+        }
+        List<User> users = User.listAll(User.class);
+        return users.isEmpty() ? null : users.get(0);
+    }
+
+    public static String getAPI_TOKEN(Context context) {
+        locale = context.getResources().getConfiguration().locale.toString();
+        return API_TOKEN.isEmpty() ? Vars.getDB(context, Vars.KEY_HEADER_TOKEN, "") : API_TOKEN;
+    }
+
+
+    public static long airtime(int modified_at, int card_duration) {
+
+        card_duration = card_duration * 86400;
+        int expiration = modified_at + card_duration;
+        double result = (new Date()).getTime() / 1000;
+        return expiration - Math.round(result);
+    }
+
+    public static void saveUser(com.trivoda.jara.model.User user) {
+
+        if (Vars.currentUser == null) {
+            Vars.currentUser = new User(user.id, user.platform, user.user_id, user.name, user.username, user.email, user.phone, user.picture, user.token, user.secret, user.bank_id, user.acc_name, user.acc_no, user.card_id, user.wallet, user.wallet2, user.cashed_out, user.card_type, user.card_duration, user.enabled, user.modified_at, user.acc_type, user.email_notify, user.online_at, user.created_at);
+            Vars.currentUser.save();
+        } else {
+
+            Vars.currentUser.user_id = user.user_id;
+            Vars.currentUser.platform = user.platform;
+            Vars.currentUser.name = user.name;
+            Vars.currentUser.card_id = user.card_id;
+            Vars.currentUser.username = user.username;
+            Vars.currentUser.email = user.email;
+            Vars.currentUser.phone = user.phone;
+            Vars.currentUser.picture = user.picture;
+            Vars.currentUser.token = user.token;
+            Vars.currentUser.secret = user.secret;
+            Vars.currentUser.bank_id = user.bank_id;
+            Vars.currentUser.acc_name = user.acc_name;
+            Vars.currentUser.acc_no = user.acc_no;
+            Vars.currentUser.card_id = user.card_id;
+            Vars.currentUser.card_duration = user.card_duration;
+            Vars.currentUser.card_type = user.card_type;
+            Vars.currentUser.wallet = user.wallet;
+            Vars.currentUser.wallet2 = user.wallet2;
+            Vars.currentUser.online_at = user.online_at;
+            Vars.currentUser.email_notify = user.email_notify;
+            Vars.currentUser.acc_type = user.acc_type;
+            Vars.currentUser.modified_at = user.modified_at;
+            Vars.currentUser.save();
+        }
+    }
+
+
+//  public static JSONObject getJSONObjectString(String jsonString) {
+//    try {
+//      return new JSONObject(jsonString);
+//    } catch (JSONException jse) {
+//      jse.printStackTrace();
+//      return null;
+//    }
+//  }
+
+//  public static float round(float d, int decimalPlace) {
+//    BigDecimal bd = new BigDecimal(Float.toString(d));
+//    bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+//    return bd.floatValue();
+//  }
+
+    public static String toCurrency(float value) {
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        return formatter.format(value);
+    }
+
+    public static int percentageDiscount(float a, float b) {
+        return Math.round(((a - b) / a) * 100);
+    }
+
+
+    public static int getInt(Object a) {
+        return Integer.parseInt(a.toString());
+    }
+
+
+    public static void LaunchOfferActivity(Activity activity, com.trivoda.jara.model.Offer offer) {
+        currentOffer = offer;
+        activity.startActivity(new Intent(activity, OfferActivity.class));
+    }
+
+    public static String dateToRelativeString(long date) {
+        PrettyTime prettyTime = new PrettyTime();
+        Date then = new Date(date * 1000);
+        return prettyTime.format(then);
+    }
+
+    public static void LaunchCompanyActivity(Activity activity, com.trivoda.jara.model.Company company) {
+        currentCompany = company;
+        activity.startActivity(new Intent(activity, CompanyActivity.class));
+    }
+
+    public static void LaunchCategoryActivity(Activity activity, com.trivoda.jara.model.Category category) {
+        currentCategory = category;
+        activity.startActivity(new Intent(activity, CategoryActivity.class));
+    }
+
+    public static void showHomeButton(ActionBar actionBar) {
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+
+    }
+
+    public static AutoSpanRecyclerView recyclerView = null;
+
+    public static void PopulateOfferList(final Activity activity, final View view, final com.trivoda.jara.model.Offer[] offers, final int recyclerViewId) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (offers == null || offers.length == 0) {
+                    Vars.showCenterMessage(activity, view, R.id.mainView, activity.getString(R.string.no_content) + " " + activity.getString(R.string.title_offers).toLowerCase(), null);
+                } else {
+                    recyclerView = (AutoSpanRecyclerView) view.findViewById(recyclerViewId);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
+                    recyclerView.setAdapter(new OfferAdapter(offers, activity));
+                }
+            }
+        });
+    }
+
+
+    public static void ShowNativeMessage(final Activity activity, final String msg, final String title, final DialogInterface.OnClickListener positiveClick) {
+        activity.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                Builder dg = new AlertDialog.Builder(activity);
+                dg.setIcon(R.mipmap.ic_launcher).setTitle(title != null ? title : activity.getString(R.string.app_name))
+                        .setMessage(msg).setCancelable(true).setPositiveButton(activity.getString(R.string.action_retry), positiveClick)
+                        .setNegativeButton(activity.getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                dg.show();
+            }
+        });
+
+    }
+
+    public static class UpdateCurrentUser {
+
+        protected void then(String result) {
+            try {
+                saveUser(new Gson().fromJson(result, com.trivoda.jara.model.User.class));
+            } catch (Exception e0) {
+                e0.printStackTrace();
+            }
+        }
+
+        public UpdateCurrentUser(final Activity activity) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    init(activity);
+                    if (currentUser != null) {
+                        new MakeHTTPRequest(activity, "users/" + Vars.currentUser._id, Vars.GET) {
+                            @Override
+                            protected void done(String result) {
+                                super.done(result);
+                                then(result);
+                            }
+
+                            @Override
+                            protected void error(int code, String result, int viewId) {
+                                super.error(code, result, viewId);
+                                ShowNativeMessage(activity, result, activity.getString(R.string.error), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new UpdateCurrentUser(activity);
+                                    }
+                                });
+                            }
+                        };
+                    }
+                }
+            }).start();
+        }
+    }
+
+    public static void isLoading(final Activity context, final boolean b) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (loading == null) {
+                        loading = new Dialog(context);
+                        loading.setTitle(context.getString(R.string.title_loading));
+                        loading.setCancelable(false);
+                        loading.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        loading.setContentView(R.layout.dialog_loading);
+                    }
+
+                    if (loading != null) {
+                        try {
+                            if (b && !loading.isShowing()) {
+                                loading.show();
+                            } else {
+                                loading.cancel();
+                                loading = null;
+                            }
+                        } catch (Exception e0) {
+                            e0.printStackTrace();
+                        }
+
+                    }
+                } catch (Exception e0) {
+                    e0.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static void isCenterLoading(Activity activity, View view, boolean show) {
+        centerLoading(activity, view, show, -1);
+    }
+
+
+    private static void centerLoading(final Activity activity, final View view, final boolean show, final int viewId) {
+
+        final int ViewId = viewId == -1 ? R.id.mainView : viewId;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (view == null) {
+                    if (activity.findViewById(R.id.loadingView) != null) {
+                        (activity.findViewById(R.id.loadingView)).setVisibility(show ? View.VISIBLE : View.GONE);
+                        (activity.findViewById(ViewId)).setVisibility(show ? View.GONE : View.VISIBLE);
+                    }
+                } else {
+                    if (view.findViewById(R.id.loadingView) != null) {
+                        (view.findViewById(R.id.loadingView)).setVisibility(show ? View.VISIBLE : View.GONE);
+                        (view.findViewById(ViewId)).setVisibility(show ? View.GONE : View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
+    public static void isCenterLoading(final Activity activity, View view, final boolean show, final int viewId) {
+        if (activity != null) {
+            centerLoading(activity, view, show, viewId);
+        }
+    }
+
+    public static void showCenterMessage(Activity activity, View view, int viewId, String message, View.OnClickListener click) {
+        centerMessage(activity, view, viewId, message, click);
+    }
+
+    public static void showCenterMessage(Activity activity, int viewId, String message, View.OnClickListener click) {
+        centerMessage(activity, null, viewId, message, click);
+    }
+
+    private static void centerMessage(final Activity activity, final View view, final int viewId, final String message, final View.OnClickListener click) {
+        if (activity == null) {
+            return;
+        }
+        if (view == null) {
+            isCenterLoading(activity, null, false, viewId);
+        } else {
+            isCenterLoading(activity, view, false, viewId);
+        }
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                boolean isView = view != null && view.findViewById(R.id.messageView) != null || activity.findViewById(R.id.messageView) != null;
+                if (isView) {
+                    View messageView;
+                    if (view != null) {
+                        messageView = view.findViewById(R.id.messageView);
+                    } else {
+                        messageView = activity.findViewById(R.id.messageView);
+                    }
+                    messageView.setVisibility(View.VISIBLE);
+                    ((MyTextView) messageView.findViewById(R.id.messageTextView)).setText(message);
+                    if (click != null) {
+                        (messageView.findViewById(R.id.messageActionButton)).setOnClickListener(click);
+                    } else {
+                        (messageView.findViewById(R.id.messageActionButton)).setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+    }
+
+    public static boolean isOldUser(Activity activity, boolean isOld) {
+
+        String sharedKey = "app_first_launch";
+        if (isOld) {
+            SharedPreferences sp = PreferenceManager
+                    .getDefaultSharedPreferences(activity);
+            sp.edit().putBoolean(sharedKey, true).apply();
+            return true;
+        }
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+        return sp.getBoolean(sharedKey, false);
+    }
+
+    public static void init(Context context) {
+        currentUser = getCurrentUser();
+        API_TOKEN = getAPI_TOKEN(context);
+    }
+
+    public static String getDB(Context context, String id, String init) {
+        return context.getSharedPreferences(myPrefs, Activity.MODE_PRIVATE).getString(id, init);
+    }
+
+    public static int getDB(Context context, String id, int init) {
+        return context.getSharedPreferences(myPrefs, Activity.MODE_PRIVATE).getInt(id, init);
+    }
+
+    public static void saveDB(String id, String value, Context context) {
+        try {
+            context.getSharedPreferences(myPrefs, Activity.MODE_PRIVATE).edit().putString(id, value).apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveDB(String id, int value, Context context) {
+        try {
+            context.getSharedPreferences(myPrefs, Activity.MODE_PRIVATE).edit().putInt(id, value).apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void clearDB(Context context) {
+        try {
+            Vars.currentUser = null;
+            User.deleteAll(User.class);
+            Offer.deleteAll(Offer.class);
+            Category.deleteAll(Category.class);
+        } catch (SQLiteException sqlError) {
+            sqlError.printStackTrace();
+        }
+        context.getSharedPreferences(myPrefs, Activity.MODE_PRIVATE).edit().clear().apply();
+    }
+
+    public static abstract class GetBitmapFromURL {
+
+        public GetBitmapFromURL(String bitmapURL, final Context context) {
+            final Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    done(bitmap);
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    done(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_offer));
+                }
+            };
+            Picasso.with(context).load(bitmapURL).centerInside().into(target);
+        }
+
+        protected abstract void done(Bitmap bitmap);
+    }
+
+    public static void Toaster(final String msg, final Activity activity, int duration) {
+        final int toastDuration = duration == 0 ? Toast.LENGTH_LONG : duration;
+        try {
+            activity.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(activity, msg, toastDuration).show();
+                }
+            });
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
+        }
+    }
+
+    public static void LaunchActivity(Activity activity, JSONObject jsonObject, String[] keys, Class<?> activityClass) {
+        Intent i = new Intent();
+        try {
+            for (String key : keys) {
+                if (jsonObject.has(key)) {
+                    i.putExtra(key, jsonObject.getString(key));
+                }
+            }
+            i.setClass(activity, activityClass);
+            activity.startActivity(i);
+        } catch (JSONException jse) {
+            jse.printStackTrace();
+        }
+
+    }
+
+    public static abstract class MakeHTTPRequest {
+
+        private Activity activity;
+        private View view;
+        private View.OnClickListener clickListener = null;
+
+        public MakeHTTPRequest(Activity activity, String apiRoute, int method) {
+            this.activity = activity;
+            makeRequest(apiRoute, null, null, method, -1);
+        }
+
+        public MakeHTTPRequest(Activity activity, View view, String apiRoute, int method) {
+            this.activity = activity;
+            this.view = view;
+            makeRequest(apiRoute, null, null, method, -1);
+        }
+
+        public MakeHTTPRequest(Activity activity, View view, String apiRoute, int method, View.OnClickListener clickListener) {
+            this.activity = activity;
+            this.clickListener = clickListener;
+            this.view = view;
+            makeRequest(apiRoute, null, null, method, -1);
+        }
+
+        public MakeHTTPRequest(Activity activity, String apiRoute, int method, View.OnClickListener clickListener) {
+            this.activity = activity;
+            this.clickListener = clickListener;
+            makeRequest(apiRoute, null, null, method, -1);
+        }
+
+        public MakeHTTPRequest(Activity activity, String apiRoute, int method, int viewId) {
+            this.activity = activity;
+            makeRequest(apiRoute, null, null, method, viewId);
+        }
+
+        public MakeHTTPRequest(Activity activity, String apiRoute, String[] keys, String[] values, int method, int viewId) {
+            this.activity = activity;
+            makeRequest(apiRoute, keys, values, method, viewId);
+        }
+
+        public MakeHTTPRequest(Activity activity, String apiRoute, String[] keys, String[] values, int method) {
+            this.activity = activity;
+            makeRequest(apiRoute, keys, values, method, -1);
+        }
+
+        private void makeRequest(final String apiRoute, final String[] keys, final String[] values, final int method, final int viewId) {
+            Vars.isCenterLoading(activity, view, true, viewId);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final Object[] result = HttpRequest(apiRoute, keys, values, HttpMethods.values()[method - 1], activity);
+                        if ((Boolean) result[1]) {
+                            Vars.isCenterLoading(activity, view, false, viewId);
+                            done(result[0].toString());
+                            done(getInt(result[2]), result[0].toString());
+                        } else {
+                            Log.e("Error String", result[0].toString() + "-" + result[1].toString() + "-" + result[2].toString());
+                            error(getInt(result[2]), result[0].toString(), viewId);
+                        }
+                    } catch (IllegalArgumentException iae) {
+                        iae.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+
+        protected void done(String result) {
+
+        }
+
+        protected void done(int statusCode, String result) {
+
+        }
+
+        protected void error(int code, String result, int viewId) {
+            Vars.showCenterMessage(activity, view, viewId, "(#" + code + ") " + result, clickListener);
+            if (clickListener == null && activity != null) {
+                Vars.Toaster("#(" + code + ") " + activity.getString(R.string.error_connection), activity, 0);
+            }
+        }
+    }
+
+
+    public static String Shorten_String(String text, int len) {
+        if (text == null) {
+            return "";
+        }
+        text = text.trim();
+        if (text.length() >= len) {
+            return text.substring(0, len - 3).trim() + "...";
+        } else {
+            return text;
+        }
+    }
+
+    private static Object[] HttpRequest(String urlSuffix, String[] keys, String[] values, HttpMethods method, Activity activity) {
+        String apiRoute = BASE_URL + API_PATH + urlSuffix + (urlSuffix.contains("?") ? "&" : "?") + "versionName=" + VersionName + "&versionCode=" + VersionCode;
+        return httpRequest(apiRoute, keys, values, method, activity);
+
+    }
+
+    public static Object[] httpRequest(String urlString, String[] keys, String[] values,
+                                       HttpMethods
+                                               method, Activity activity) {
+        int responseCode = 0;
+        boolean complete = false;
+        StringBuilder response = new StringBuilder();
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod(method.name());
+
+
+            con.setRequestProperty(KEY_HEADER_TOKEN, API_TOKEN);
+            if (currentUser != null) {
+                con.setRequestProperty(KEY_HEADER_USER, String.valueOf(currentUser._id));
+            }
+            con.setRequestProperty("Locale", locale);
+
+            switch (method) {
+                case POST:
+                case PUT:
+                    con.setRequestProperty("X-Yj-Authorization", "E2C88102-43E0-48D8-95C9-C43A455793B9");
+                    con.setDoOutput(true);
+                    DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                    String urlParameters = "";
+                    if (keys != null) {
+                        for (int i = 0; i < keys.length; i++) {
+                            urlParameters += (i == 0 ? "" : "&") + keys[i] + "=" + values[i];
+                        }
+                    }
+                    wr.writeBytes(urlParameters);
+                    wr.flush();
+                    wr.close();
+
+                    String token = con.getHeaderField(KEY_HEADER_TOKEN);
+                    if (token != null && !token.isEmpty()) {
+                        API_TOKEN = token;
+                        Log.i(KEY_HEADER_TOKEN, token);
+                        Vars.saveDB(KEY_HEADER_TOKEN, token, activity);
+                    }
+                    break;
+            }
+            responseCode = con.getResponseCode();
+            complete = responseCode >= 200 && responseCode <= 206;
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+        } catch (MalformedURLException mur) {
+            response.append("Error: ");
+            response.append(mur.getMessage());
+        } catch (IOException ioe) {
+            if (activity != null) {
+                response.append(activity.getString(R.string.error_connection));
+            } else {
+                response.append("DE:Fehler mit netzwerk\n\nEN:Error with network");
+            }
+        }
+        return new Object[]{
+                response.toString(),
+                complete,
+                responseCode
+        };
+    }
+}
