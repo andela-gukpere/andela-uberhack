@@ -5,8 +5,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,38 +14,19 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.andela.uberhack.models.User;
-import com.google.gson.Gson;
 
-
-public class LoginActivity extends AppCompatActivity {
+public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        if(Vars.user.response.google_token == null) {
 
-        String user = Vars.getDB(this, "user", "user");
-        if(user.equals("user")) {
-            Vars.user = new Gson().fromJson(user, User.class);
-            if(Vars.user.response.uuid != null) {
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-            }
         } else {
-            setContentView(R.layout.activity_login);
+            findViewById(R.id.google_plus_button).setVisibility(View.GONE);
         }
-
-        Instance = this;
     }
-    public static Activity Instance;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
-
 
     private WebView webView;
     private Dialog authenticationDialog;
@@ -105,14 +86,21 @@ public class LoginActivity extends AppCompatActivity {
                 if (url.contains("code=")) {
                     webView.loadUrl("javascript:uber.getJSONString(document.body.innerText);");
                     authenticationDialog.hide();
-                    startActivity(new Intent(Instance, null));
+
                 }
             }
 
         });
         webView = Vars.popUpWebView(webView, this);
-        webView.loadUrl("https://login.uber.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fandelahack.herokuapp.com%2Fuber%2Fcallback&scope=profile&client_id=rr2NzvHi69QJalUHz0ImU1KidoE1KGc5");
+        webView.loadUrl("https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&response_type=code&client_id=453264479059-fc56k30fdhl07leahq5n489ct7ifk7md.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5555%2Fcalendar%2Fcallback");
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override

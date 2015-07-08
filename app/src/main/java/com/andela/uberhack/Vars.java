@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,10 +39,16 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.Window;
+import android.webkit.GeolocationPermissions;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 
@@ -67,6 +74,7 @@ public class Vars {
     public static final String KEY_HEADER_TOKEN = "X-Yj-Token";
     public static final String KEY_HEADER_USER = "X-Yj-User";
     public static final String KEY_ID = "id";
+    public static User user;
     //  public static final String KEY_JSON = "json";
     public static final String KEY_QUERY = "query";
     public static final String KEY_ENABLED = "enabled";
@@ -308,6 +316,63 @@ public class Vars {
         return context.getSharedPreferences(myPrefs, Activity.MODE_PRIVATE).getString(id, init);
     }
 
+    public static WebView popUpWebView(WebView webView, Activity self) {
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int progress) {
+
+            }
+
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                callback.invoke(origin, true, false);
+            }
+
+        });
+        if (Build.VERSION.SDK_INT >= 16) {
+            Class<?> clazz = webView.getSettings().getClass();
+            Method method;
+            try {
+                method = clazz.getMethod("setAllowUniversalAccessFromFileURLs", boolean.class);
+                if (method != null) {
+                    try {
+                        method.invoke(webView.getSettings(), true);
+                    } catch (Exception e) {
+
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+
+        }
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setBlockNetworkImage(false);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setBlockNetworkLoads(false);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.playSoundEffect(SoundEffectConstants.CLICK);
+        webView.getSettings().setDatabaseEnabled(true);
+        webView.getSettings().setGeolocationEnabled(true);
+
+        webView.addJavascriptInterface(new JavaScriptInterface(self,webView),"uber");
+        webView.requestFocus(View.FOCUS_DOWN);
+        webView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_UP:
+                        if (!v.hasFocus()) {
+                            v.requestFocus();
+                        }
+                        break;
+                }
+                return false;
+            }
+        });
+        return webView;
+    }
     public static int getDB(Context context, String id, int init) {
         return context.getSharedPreferences(myPrefs, Activity.MODE_PRIVATE).getInt(id, init);
     }

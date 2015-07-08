@@ -20,6 +20,10 @@
             android:name=".AuthActivity"
             android:label="@string/title_activity_auth" >
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" >
+        </activity>
     </application>
 
 </manifest>

@@ -29,4 +29,7 @@ public class UserResponse {
     @SerializedName("uuid")
     public String uuid;
 
+    @SerializedName("google_token")
+    public String google_token;
+
 }
