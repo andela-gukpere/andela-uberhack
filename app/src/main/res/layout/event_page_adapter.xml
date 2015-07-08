@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:textSize="32sp"
+        android:gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:text="The uba summary stuff"
+        android:background="@color/colorPrimary"
+        android:id="@+id/summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+        <TextView
+            android:textSize="24sp"
+            android:layout_margin="16dp"
+            android:layout_below="@id/summary"
+            android:id="@+id/location"
+            android:text="This is location"
+            android:background="@color/colorGreen1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:textSize="24sp"
+            android:layout_margin="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/location"
+            android:layout_below="@id/summary"
+            android:id="@+id/time"
+            android:gravity="right"
+            android:text="This is the Time "
+            android:background="@color/colorBlue1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+</RelativeLayout>

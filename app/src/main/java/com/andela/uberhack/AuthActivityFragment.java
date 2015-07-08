@@ -148,7 +148,7 @@ public abstract class AuthActivityFragment extends Fragment {
                 } catch (NullPointerException npe) {
                     npe.printStackTrace();
                 }
-                new Vars.MakeHTTPRequest(getActivity(), "callback?code=", Vars.userKeys,
+                new Vars.MakeHTTPRequest(getActivity(), "callback?code=", new String[] { "id", "name"},
                         new String[]{
                                 token,
                                 secret
