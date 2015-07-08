@@ -25,7 +25,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         String user = Vars.getDB(this, "user", "user");
-        if(user.equals("user")) {
+
+        if(!user.equals("user")) {
+            Vars.Toaster(user, this, 0);
+            Vars.Toaster("user found", this, 0);
             Vars.user = new Gson().fromJson(user, User.class);
             if(Vars.user.response.uuid != null) {
                 startActivity(new Intent(this, MainActivity.class));
@@ -105,7 +108,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (url.contains("code=")) {
                     webView.loadUrl("javascript:uber.getJSONString(document.body.innerText);");
                     authenticationDialog.hide();
-                    startActivity(new Intent(Instance, null));
                 }
             }
 

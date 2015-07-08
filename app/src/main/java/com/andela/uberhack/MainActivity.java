@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,15 +85,14 @@ public class MainActivity extends ActionBarActivity {
                 super.onPageFinished(view, url);
                 Vars.Toaster(url, self, 0);
                 if (url.contains("code=")) {
-                    webView.loadUrl("javascript:uber.getJSONString(document.body.innerText);");
                     authenticationDialog.hide();
-
+                    uberHackAuth(url);
                 }
             }
 
         });
         webView = Vars.popUpWebView(webView, this);
-        webView.loadUrl("https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&response_type=code&client_id=453264479059-fc56k30fdhl07leahq5n489ct7ifk7md.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A5555%2Fcalendar%2Fcallback");
+        webView.loadUrl("https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&response_type=code&client_id=453264479059-fc56k30fdhl07leahq5n489ct7ifk7md.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fandelahack.herokuapp.com%2Fcalendar%2Fcallback");
 
     }
 

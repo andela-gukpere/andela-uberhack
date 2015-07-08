@@ -14,18 +14,22 @@
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/accent_material_light"
         android:layout_height="128dp"/>
 
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="20dp"
+        android:textSize="20sp"
+        android:layout_margin="20dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:text="Authenticate with Goolge to get Calendar"
         android:layout_height="wrap_content"/>
 
     <Button
         android:layout_width="wrap_content"
         android:text="Connect with Google"
+        android:onClick="authDialog"
         android:layout_gravity="center_horizontal"
         android:id="@+id/google_plus_button"
         android:layout_height="wrap_content"/>

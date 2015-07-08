@@ -28,4 +28,15 @@ public class JavaScriptInterface {
             mc.startActivity(new Intent(mc, MainActivity.class));
         }
     }
+
+    @JavascriptInterface
+    public void getJSONCalendarString(final String json) {
+
+        Vars.user = new Gson().fromJson(json, User.class);
+        if(Vars.user.response.uuid != null) {
+            Vars.saveDB("user",json, mc);
+            mc.finish();
+            mc.startActivity(new Intent(mc, MainActivity.class));
+        }
+    }
 }

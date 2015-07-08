@@ -24,8 +24,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile('com.github.androidsocialnetworks:library:0.3.7@aar') {
-        transitive = true
-    }
     compile 'com.google.code.gson:gson:2.3'
 }
