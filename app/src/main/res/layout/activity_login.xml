@@ -10,17 +10,20 @@
                 tools:context=".LoginActivity">
 
     <ImageView
-        android:layout_width="128dp"
+        android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/colorPrimary"
-        android:layout_height="128dp"/>
+        android:src="@drawable/icon_andela"
+        android:layout_height="wrap_content"/>
 
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
-            android:text="Auth with Uber"
+
+            android:src="@drawable/login"
+            android:background="@null"
+            android:layout_marginTop="100dp"
             android:onClick="authDialog"
             android:layout_gravity="center_horizontal"
 

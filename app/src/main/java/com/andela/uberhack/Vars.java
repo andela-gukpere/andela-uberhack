@@ -14,6 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -21,9 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import com.andela.uberhack.models.Calendar;
 import com.andela.uberhack.models.User;
-import com.androidsocialnetworks.lib.SocialNetworkManager;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -97,24 +98,11 @@ public class Vars {
     public static final String KEY_LNG = "longitude";
     public static final String KEY_EMAIL_NOTIFY = "email_notify";
     public static final String KEY_NOTIFICATIONS = "notifications";
-
+    public static Calendar[] calendars;
     public static final String KEY_LAT = "latitude";
     //  public static final String KEY_LOCATION_MAP = "location_map";
-    public static final String KEY_WEBSITE = "website";
-    public static final String KEY_LOGO_SM = "logo_sm";
+
     public static final String KEY_CARD_ID = "card_id";
-    public static final String KEY_CARD_TYPE = "card_type";
-    public static final String KEY_CARD_DURATION = "card_duration";
-    public static final String KEY_CARD_VAL = "card_value";
-    public static final String KEY_DESCRIPTION = "description";
-    public static final String KEY_HIGHLIGHTS = "highlights";
-    public static final String KEY_PRICE_DISCOUNT = "price_discount";
-    public static final String KEY_PRICE_ORIGINAL = "price_original";
-    public static final String KEY_QUANTITY = "quantity";
-    public static final String KEY_WALLET = "wallet";
-    public static final String KEY_WALLET_2 = "wallet2";
-    public static final String KEY_CASHED_OUT = "cashed_out";
-    public static final String KEY_ONLINE_AT = "online_at";
     public static final String KEY_BANK_ID = "bank_id";
 
     public static final String KEY_PHONE = "phone";
@@ -128,32 +116,15 @@ public class Vars {
     public static String[] platforms = new String[]{"", "Twitter", "LinkedIn", "Google", "Facebook"};
     public static User currentUser = null;
 
-    public static SocialNetworkManager mSocialNetworkManager;
+
     public static int socialNetworkID = 0;
     public static String BROADCAST_ACTION = "com.trivoda.jara.VIEW_ACTION";
-    public static String BASE_URL = "https://andelahack.herokuapp.com/uber/";
+    public static String BASE_URL = "https://andelahack.herokuapp.com/";
     //public static String BASE_URL = "http://192.168.57.1/projects/your-jara/app/";
-    public static String API_PATH = "api/";
+    public static String API_PATH = "";
     private static String myPrefs = "trvYJ001";
     public static String VersionName = "";
     public static String VersionCode = "";
-    public static String friendId = null;
-    public static String offerId = null;
-    public static String[] userKeys = new String[]{
-            KEY_UID,
-            KEY_CARD_ID,
-            KEY_PLT,
-            KEY_NAME,
-            KEY_USN,
-            KEY_EMAIL,
-            KEY_PHONE,
-            KEY_BANK_ID,
-            KEY_ACC_NAME,
-            KEY_ACC_NO,
-            KEY_IMG,
-            KEY_TOKEN,
-            KEY_SECRET
-    };
 
     private static Dialog loading = null;
 
@@ -210,11 +181,18 @@ public class Vars {
 
 
 
-    public static String dateToRelativeString(long date) {
-        PrettyTime prettyTime = new PrettyTime();
-        Date then = new Date(date * 1000);
-        return prettyTime.format(then);
+    public static String dateToRelativeString(String date) throws ParseException {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+            Date date1 = format.parse(date);
+            return date1.toString();
+        }
+        catch (Exception e0) {
+
+        }
+        return  date;
     }
+
 
 
 
@@ -419,7 +397,7 @@ public class Vars {
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    done(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_plusone_small_off_client));
+                    //done(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_plusone_small_off_client));
                 }
             };
             Picasso.with(context).load(bitmapURL).centerInside().into(target);
@@ -556,7 +534,7 @@ public class Vars {
     }
 
     private static Object[] HttpRequest(String urlSuffix, String[] keys, String[] values, HttpMethods method, Activity activity) {
-        String apiRoute = BASE_URL + API_PATH + urlSuffix + (urlSuffix.contains("?") ? "&" : "?") + "versionName=" + VersionName + "&versionCode=" + VersionCode;
+        String apiRoute = BASE_URL + API_PATH + urlSuffix;
         return httpRequest(apiRoute, keys, values, method, activity);
 
     }
@@ -569,6 +547,7 @@ public class Vars {
         StringBuilder response = new StringBuilder();
         try {
             URL url = new URL(urlString);
+            Log.e("API_ROUTE", urlString);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod(method.name());
 

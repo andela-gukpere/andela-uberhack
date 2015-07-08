@@ -26,11 +26,9 @@ public class LoginActivity extends AppCompatActivity {
 
         String user = Vars.getDB(this, "user", "user");
 
-        if(!user.equals("user")) {
-            Vars.Toaster(user, this, 0);
-            Vars.Toaster("user found", this, 0);
+        if (!user.equals("user")) {
             Vars.user = new Gson().fromJson(user, User.class);
-            if(Vars.user.response.uuid != null) {
+            if (Vars.user.response.uuid != null) {
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             }
@@ -40,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Instance = this;
     }
+
     public static Activity Instance;
 
     @Override
@@ -52,7 +51,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private WebView webView;
     private Dialog authenticationDialog;
-    public void authDialog (View view) {
+
+    public void authDialog(View view) {
         try {
             if (authenticationDialog == null) {
                 authenticationDialog = new Dialog(this);
@@ -79,19 +79,20 @@ public class LoginActivity extends AppCompatActivity {
             e0.printStackTrace();
         }
     }
-    private void uberHackAuth (String url) {
+
+    private void uberHackAuth(String url) {
         Uri uri = Uri.parse(url);
         String code = uri.getQueryParameter("code");
-        Vars.Toaster("Auth code:"  + code, this, 0);
+        Vars.Toaster("Auth code:" + code, this, 0);
     }
 
-    private void uberAuth () {
+    private void uberAuth() {
         final Activity self = this;
-        webView = (WebView)authenticationDialog.findViewById(R.id.authWebView);
+        webView = (WebView) authenticationDialog.findViewById(R.id.authWebView);
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
-            public void onReceivedError(WebView view, int errorCode,String description, String failingUrl) {
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
             }
 

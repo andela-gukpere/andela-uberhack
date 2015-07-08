@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -24,6 +25,8 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import com.andela.uberhack.models.Calendar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,43 +39,47 @@ import java.util.ListIterator;
 public class EventPage extends Activity {
     List<String> list;
     String[] taxiTypes;
-    TextView summary;
-    TextView destination;
-    TextView organiser;
-    TextView status;
-    TextView startTime;
-    TextView endTime;
-    ToggleButton shared;
-    Spinner taxiType;
+
     ListView eventList;
-    String locationName;
     protected LocationManager locationManager;
     private Location location;
     Double longitude;
     Double latitude;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_page);
-        eventList = (ListView)findViewById(R.id.events);
+        taxiTypes = new String[]{"UBER X", "UBER BLACK", "UBER SUN"};
+        eventList = (ListView) findViewById(R.id.events);
         eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Dialog dialog = new Dialog(EventPage.this);
+                dialog.setTitle("Event");
                 dialog.setContentView(R.layout.event_details);
-                summary = (TextView)dialog.findViewById(R.id.summary);
-                destination = (TextView)dialog.findViewById(R.id.destination);
-                status = (TextView)dialog.findViewById(R.id.status);
-                startTime = (TextView)dialog.findViewById(R.id.start_time);
-                endTime = (TextView)dialog.findViewById(R.id.end_time);
-                taxiType = (Spinner)dialog.findViewById(R.id.taxi_type);
-                taxiTypes = new String[]{"UBER X","UBER BLACK","UBER SUN"};
+                Calendar calendar = Vars.calendars[position];
+                ((TextView) dialog.findViewById(R.id.summary)).setText(calendar.summary);
+                ((TextView) dialog.findViewById(R.id.destination)).setText(calendar.location);
+                ((TextView) dialog.findViewById(R.id.status)).setText(calendar.status);
+                try {
+                    ((TextView) dialog.findViewById(R.id.start_time)).setText(Vars.dateToRelativeString(calendar.start));
+                    ((TextView) dialog.findViewById(R.id.end_time)).setText(Vars.dateToRelativeString(calendar.end));
+                }
+                catch (Exception e) {
+
+                }
+                Spinner taxiType = (Spinner) dialog.findViewById(R.id.taxi_type);
                 taxiType.setAdapter(new ArrayAdapter<String>(EventPage.this, android.R.layout.simple_spinner_dropdown_item, taxiTypes));
-                getLocation();
+
+                //getLocation();
                 dialog.show();
             }
         });
+
+        eventList.setAdapter(new EventAdapter(this, Vars.calendars));
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,6 +102,7 @@ public class EventPage extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
     private void getLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -112,9 +120,9 @@ public class EventPage extends Activity {
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null) {
-                           longitude = location.getLongitude();
+                            longitude = location.getLongitude();
                             latitude = location.getLatitude();
-                            Log.v("Locations are ", longitude.toString() + " "+latitude.toString() );
+                            Log.v("Locations are ", longitude.toString() + " " + latitude.toString());
 //                            setMapLocation(location);
                         }
                     }
@@ -135,22 +143,25 @@ public class EventPage extends Activity {
             }
         }
     }
-    public class EventAdapter extends BaseAdapter{
-        private Context context;
-        String events[];
 
-        public EventAdapter(Context context){
+    public class EventAdapter extends BaseAdapter {
+        private Context context;
+
+        private Calendar[] calendars;
+
+        public EventAdapter(Context context, Calendar[] calendars) {
             this.context = context;
+            this.calendars = calendars;
         }
 
         @Override
         public int getCount() {
-            return events.length;
+            return calendars.length;
         }
 
         @Override
         public Object getItem(int position) {
-            return events[position];
+            return calendars[position];
         }
 
         @Override
@@ -161,17 +172,23 @@ public class EventPage extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = null;
-            if(convertView == null){
-                LayoutInflater inflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            Calendar calendar = calendars[position];
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.event_page_adapter, parent, false);
-            }
-            else{
+            } else {
                 row = convertView;
             }
-            TextView summary = (TextView)row.findViewById(R.id.summary);
-            TextView location = (TextView)row.findViewById(R.id.location);
-            TextView startTime = (TextView)row.findViewById(R.id.start_time);
-            return null;
+            ((TextView) row.findViewById(R.id.summary)).setText(calendar.summary);
+            ((TextView) row.findViewById(R.id.location)).setText(calendar.location);
+            try {
+                ((TextView) row.findViewById(R.id.start)).setText(Vars.dateToRelativeString(calendar.start));
+                ((TextView) row.findViewById(R.id.end)).setText(Vars.dateToRelativeString(calendar.end));
+            }
+            catch (Exception e) {
+
+            }
+            return row;
         }
     }
 }

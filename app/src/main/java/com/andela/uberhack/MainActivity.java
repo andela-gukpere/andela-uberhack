@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -15,6 +13,11 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.util.Date;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,16 +25,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(Vars.user.response.google_token == null) {
+        //startActivity(new Intent(this, EventPage.class));
 
-        } else {
-            findViewById(R.id.google_plus_button).setVisibility(View.GONE);
-        }
     }
 
     private WebView webView;
     private Dialog authenticationDialog;
-    public void authDialog (View view) {
+
+    public void authDialog(View view) {
         try {
             if (authenticationDialog == null) {
                 authenticationDialog = new Dialog(this);
@@ -58,19 +59,20 @@ public class MainActivity extends AppCompatActivity {
             e0.printStackTrace();
         }
     }
-    private void uberHackAuth (String url) {
-        Uri uri = Uri.parse(url);
-        String code = uri.getQueryParameter("code");
-        Vars.Toaster("Auth code:"  + code, this, 0);
+
+    private void uberHackAuth(String string) {
+        Vars.user.response.google_token = string;
+        JsonObject user = new Gson().toJsonTree(Vars.user).getAsJsonObject();
+        Vars.saveDB("user", user.toString(), this);
     }
 
-    private void uberAuth () {
+    private void uberAuth() {
         final Activity self = this;
-        webView = (WebView)authenticationDialog.findViewById(R.id.authWebView);
+        webView = (WebView) authenticationDialog.findViewById(R.id.authWebView);
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
-            public void onReceivedError(WebView view, int errorCode,String description, String failingUrl) {
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
             }
 
@@ -83,13 +85,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                Vars.Toaster(url, self, 0);
-                if (url.contains("code=")) {
+
+                if (url.contains("/calendar")) {
+                    uberHackAuth(new Date().toString());
+                    webView.loadUrl("javascript:uber.getJSONCalendarString(document.body.innerText);");
                     authenticationDialog.hide();
-                    uberHackAuth(url);
                 }
             }
-
         });
         webView = Vars.popUpWebView(webView, this);
         webView.loadUrl("https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&response_type=code&client_id=453264479059-fc56k30fdhl07leahq5n489ct7ifk7md.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fandelahack.herokuapp.com%2Fcalendar%2Fcallback");
