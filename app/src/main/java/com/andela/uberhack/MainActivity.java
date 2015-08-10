@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
-                if (url.contains("/calendar")) {
+                if (url.contains("/calendar") && !url.contains("calendar/callback")) {
                     uberHackAuth(new Date().toString());
+                    Log.d("yes", url);
                     webView.loadUrl("javascript:uber.getJSONCalendarString(document.body.innerText);");
                     authenticationDialog.hide();
                 }
